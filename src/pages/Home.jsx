@@ -3,9 +3,16 @@ import { auth } from "../firebase"; // Import Firebase Auth
 import { signOut, onAuthStateChanged } from "firebase/auth"; // For authentication
 import { useNavigate } from "react-router-dom";
 
+// import axios from "axios";
+
+// const YOUTUBE_API_KEY = "YOUR_YOUTUBE_API_KEY"; // Replace with your actual key
+// const SEARCH_QUERY = "finance investing tips"; // Modify as needed
+// const MAX_RESULTS = 6;
+
 const Home = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [user, setUser] = useState(null);
+  // const [videos, setVideos] = useState([]);
   const navigate = useNavigate();
 
   // Fetch user details
@@ -137,6 +144,28 @@ const Home = () => {
             <div className="flex-1 border-t border-gray-500">
               <p className="mt-1">Videos:</p>
             </div>
+            {/* <div className="space-y-4">
+              {videos.length > 0 ? (
+                videos.map((video) => (
+                  <a
+                    key={video.id.videoId}
+                    href={`https://www.youtube.com/watch?v=${video.id.videoId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-3 hover:bg-gray-800 p-2 rounded"
+                  >
+                    <img
+                      src={video.snippet.thumbnails.default.url}
+                      alt={video.snippet.title}
+                      className="w-16 h-10 rounded-md"
+                    />
+                    <p className="text-sm">{video.snippet.title}</p>
+                  </a>
+                ))
+              ) : (
+                <p>Loading videos...</p>
+              )}
+            </div> */}
             <div className="flex-1 border-t border-gray-500">
               <p className="mt-1">Vlogs:</p>
             </div>
