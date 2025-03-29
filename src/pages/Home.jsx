@@ -2,17 +2,23 @@ import React, { useState, useEffect } from "react";
 import { auth } from "../firebase"; // Import Firebase Auth
 import { signOut, onAuthStateChanged } from "firebase/auth"; // For authentication
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { fetchGeminiResponse } from "../api/gemini";
+import { fetchStockData, fetchCryptoData } from "../api/polygon";
 
-// import axios from "axios";
-
-// const YOUTUBE_API_KEY = "YOUR_YOUTUBE_API_KEY"; // Replace with your actual key
-// const SEARCH_QUERY = "finance investing tips"; // Modify as needed
-// const MAX_RESULTS = 6;
+const YOUTUBE_API_KEY = "AIzaSyC8TkP3BxYXr_fVGlmjGMFgarJoZLcxFoA"; // Replace with your actual key
+const SEARCH_QUERY = "finance investing tips"; // Modify as needed
+const MAX_RESULTS = 6;
 
 const Home = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [user, setUser] = useState(null);
-  // const [videos, setVideos] = useState([]);
+  const [videos, setVideos] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [inputMessage, setInputMessage] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const [stockData, setStockData] = useState(null);
+  const [cryptoData, setCryptoData] = useState(null);
   const navigate = useNavigate();
 
   // Fetch user details
@@ -32,6 +38,65 @@ const Home = () => {
     });
 
     return () => unsubscribe(); // Cleanup listener on unmount
+  }, []);
+
+  //Gemini
+  const handleSendMessage = async () => {
+    if (!inputMessage.trim()) return;
+
+    const newMessage = { sender: "user", text: inputMessage };
+    setMessages((prev) => [...prev, newMessage]); // Add user message
+    setInputMessage("");
+    setIsTyping(true); // Show typing indicator
+
+    // Get AI response
+    const aiResponse = await fetchGeminiResponse(inputMessage);
+    setMessages((prev) => [...prev, { sender: "bot", text: aiResponse }]);
+    setIsTyping(false);
+  };
+
+  //Polygon
+  useEffect(() => {
+    const getMarketData = async () => {
+      try {
+        const stocks = await Promise.all([
+          fetchStockData("AAPL"),
+          fetchStockData("GOOGL"),
+          fetchStockData("MSFT"),
+          fetchStockData("TSLA"),
+        ]);
+
+        const cryptos = await Promise.all([
+          fetchCryptoData("BTCUSD"),
+          fetchCryptoData("ETHUSD"),
+          fetchCryptoData("SOLUSD"),
+        ]);
+
+        // Filter out null/undefined values
+        setStockData(stocks.filter((stock) => stock && stock.ticker));
+        setCryptoData(cryptos.filter((crypto) => crypto && crypto.ticker));
+      } catch (error) {
+        console.error("Error fetching market data:", error);
+      }
+    };
+
+    getMarketData();
+  }, []);
+
+  // Fetch YouTube Videos
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const response = await axios.get(
+          `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${SEARCH_QUERY}&maxResults=${MAX_RESULTS}&key=${YOUTUBE_API_KEY}`
+        );
+        setVideos(response.data.items);
+      } catch (error) {
+        console.error("Error fetching videos:", error);
+      }
+    };
+
+    fetchVideos();
   }, []);
 
   // Logout Function
@@ -119,20 +184,55 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Main Chat Section */}
       <div className="flex-1 flex flex-col justify-between">
-        <div className="flex-1 flex justify-center items-center">
-          <p className="text-gray-300">Chat content goes here...</p>
+        {/* Chat History */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          {messages.length === 0 ? (
+            <p className="text-gray-400 text-center">Start a conversation...</p>
+          ) : (
+            messages.map((msg, index) => (
+              <div
+                key={index}
+                className={`flex ${
+                  msg.sender === "user" ? "justify-end" : "justify-start"
+                }`}
+              >
+                <p
+                  className={`p-3 rounded-lg max-w-xs ${
+                    msg.sender === "user" ? "bg-blue-600" : "bg-gray-700"
+                  }`}
+                >
+                  {msg.text}
+                </p>
+              </div>
+            ))
+          )}
+          {isTyping && (
+            <p className="text-gray-400 text-sm">Finance Buddy is typing...</p>
+          )}
         </div>
 
         {/* Input Bar */}
         <div className="w-full p-4 bg-gray-900 flex items-center">
           <input
             type="text"
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSendMessage();
+              }
+            }}
             placeholder="Type a message..."
             className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 focus:outline-none"
           />
-          <button className="ml-2 bg-gray-700 p-2 rounded">📨</button>
+          <button
+            onClick={handleSendMessage}
+            className="ml-2 bg-gray-700 p-2 rounded"
+          >
+            📨
+          </button>
         </div>
       </div>
 
@@ -143,31 +243,64 @@ const Home = () => {
           <div className="flex-1 flex flex-col justify-between">
             <div className="flex-1 border-t border-gray-500">
               <p className="mt-1">Videos:</p>
+              <div className="space-y-4">
+                {videos.length > 0 ? (
+                  videos.map((video) => (
+                    <a
+                      key={video.id.videoId}
+                      href={`https://www.youtube.com/watch?v=${video.id.videoId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center space-x-3 hover:bg-gray-800 p-2 rounded"
+                    >
+                      <img
+                        src={video.snippet.thumbnails.default.url}
+                        alt={video.snippet.title}
+                        className="w-16 h-10 rounded-md"
+                      />
+                      <p className="text-sm">{video.snippet.title}</p>
+                    </a>
+                  ))
+                ) : (
+                  <p>Loading videos...</p>
+                )}
+              </div>
             </div>
-            {/* <div className="space-y-4">
-              {videos.length > 0 ? (
-                videos.map((video) => (
-                  <a
-                    key={video.id.videoId}
-                    href={`https://www.youtube.com/watch?v=${video.id.videoId}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center space-x-3 hover:bg-gray-800 p-2 rounded"
-                  >
-                    <img
-                      src={video.snippet.thumbnails.default.url}
-                      alt={video.snippet.title}
-                      className="w-16 h-10 rounded-md"
-                    />
-                    <p className="text-sm">{video.snippet.title}</p>
-                  </a>
-                ))
-              ) : (
-                <p>Loading videos...</p>
-              )}
-            </div> */}
             <div className="flex-1 border-t border-gray-500">
-              <p className="mt-1">Vlogs:</p>
+              <p className="mt-1 mb-2">Market Data:</p>
+              {stockData && stockData.length > 0 ? (
+                stockData.map((stock, index) =>
+                  stock && stock.ticker ? ( // Ensure stock exists
+                    <div
+                      key={index}
+                      className="p-2 bg-gray-800 rounded-md mt-2"
+                    >
+                      <p className="text-sm">
+                        📈 <b>{stock.ticker}:</b> ${stock.c}
+                      </p>
+                    </div>
+                  ) : null
+                )
+              ) : (
+                <p>Loading stock data...</p>
+              )}
+
+              {cryptoData && cryptoData.length > 0 ? (
+                cryptoData.map((crypto, index) =>
+                  crypto && crypto.ticker ? ( // Ensure crypto exists
+                    <div
+                      key={index}
+                      className="p-2 bg-gray-800 rounded-md mt-2"
+                    >
+                      <p className="text-sm">
+                        💰 <b>{crypto.ticker}:</b> ${crypto.c}
+                      </p>
+                    </div>
+                  ) : null
+                )
+              ) : (
+                <p>Loading crypto data...</p>
+              )}
             </div>
           </div>
         </div>

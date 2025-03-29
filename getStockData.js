@@ -4,7 +4,7 @@ import axios from 'axios';
 dotenv.config();
 
 // 1. Set API Keys
-const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY ;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY ;
 const POLYGON_API_KEY = process.env.POLYGON_API_KEY ;
 
 // 2. Define Polygon API Wrapper
@@ -24,7 +24,7 @@ const fetchPolygonData = async (endpoint, params = {}) => {
 const callGeminiAPI = async (userInput, agentScratchpad) => {
     try {
         const response = await axios.post(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${GOOGLE_API_KEY}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${GEMINI_API_KEY}`,
             {
                 contents: [{ role: "user", parts: [{ text: `User query: ${userInput}\nPrevious steps:\n${agentScratchpad}` }] }],
             }
