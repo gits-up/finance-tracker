@@ -7,7 +7,7 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 
-// Sign Up with Email & Password
+// Sign Up with Full Name, Email & Password
 export const registerUser = async (email, password, fullName) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(

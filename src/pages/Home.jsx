@@ -1,16 +1,50 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { auth } from "../firebase"; // Import Firebase Auth
+import { signOut, onAuthStateChanged } from "firebase/auth"; // For authentication
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [showProfile, setShowProfile] = useState(false);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  // Fetch user details
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser({
+          name: currentUser.displayName || "User",
+          email: currentUser.email,
+          photo:
+            currentUser.photoURL ||
+            "https://as1.ftcdn.net/jpg/03/53/11/00/1000_F_353110097_nbpmfn9iHlxef4EDIhXB1tdTD0lcWhG9.jpg", // Default avatar
+        });
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => unsubscribe(); // Cleanup listener on unmount
+  }, []);
+
+  // Logout Function
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate("/login"); // Redirect to login page after logout
+    } catch (error) {
+      console.error("Logout Error:", error.message);
+    }
+  };
 
   return (
     <div className="flex h-screen bg-gray-900 text-white flex-col md:flex-row relative">
       {/* Profile Button on Mobile */}
-      {!showProfile && (
+      {!showProfile && user && (
         <div className="md:hidden absolute top-4 left-4 z-10">
           <button onClick={() => setShowProfile(true)}>
             <img
-              src="https://as1.ftcdn.net/jpg/03/53/11/00/1000_F_353110097_nbpmfn9iHlxef4EDIhXB1tdTD0lcWhG9.jpg"
+              src={user.photo}
               alt="Avatar"
               className="w-12 h-12 rounded-full border-2 border-white"
             />
@@ -20,11 +54,13 @@ const Home = () => {
 
       {/* Sidebar */}
       <div
-        className={`w-full md:w-1/4 p-4 border-r border-gray-500 flex flex-col justify-between ${showProfile ? "block" : "hidden"} md:flex`}
+        className={`w-full md:w-1/4 p-4 border-r border-gray-500 flex flex-col justify-between ${
+          showProfile ? "block" : "hidden"
+        } md:flex`}
       >
         <div>
           <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold">FINANCEbuddy.Ai</h1>
+            <h1 className="text-xl font-bold">FINANCE Buddy.Ai</h1>
             {showProfile && (
               <button
                 className="md:hidden bg-gray-700 px-4 py-2 rounded"
@@ -37,22 +73,42 @@ const Home = () => {
           <div className="mt-4">
             <div className="flex items-center">
               <img
-                src="https://as1.ftcdn.net/jpg/03/53/11/00/1000_F_353110097_nbpmfn9iHlxef4EDIhXB1tdTD0lcWhG9.jpg"
+                src={user?.photo}
                 alt="Avatar"
                 className="w-12 h-12 rounded-full mr-3"
               />
+              <div>
+                <p className="font-bold">{user?.name}</p>
+                <p className="text-sm text-gray-400">{user?.email}</p>
+              </div>
             </div>
-            <p className="mt-2">Welcome Ramesh, I am your personalized financial assistant.</p>
+            <p className="mt-2">
+              Welcome {user?.name}, I am your personalized financial assistant.
+            </p>
             <p>Fill your details to get accurate recommendations.</p>
-            <button className="mt-3 bg-gray-700 px-4 py-2 rounded-md w-2/3">Click to add data</button>
+            <button className="mt-3 bg-gray-700 px-4 py-2 rounded-md w-full">
+              Click to add data
+            </button>
           </div>
         </div>
 
         {/* Tools Section */}
         <div className="mt-6">
-          <h2 className="text-lg font-semibold border-t border-gray-500">Tools</h2>
-          <button className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-2/3">SIP calculator</button>
-          <button className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-2/3">Interest calculator</button>
+          <h2 className="mb-2 text-lg font-semibold border-t border-gray-500">
+            Tools
+          </h2>
+          <button className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full">
+            SIP calculator
+          </button>
+          <button className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full">
+            Interest calculator
+          </button>
+          <button
+            className="mt-2 bg-red-600 px-4 py-2 rounded-md w-full"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
         </div>
       </div>
 
