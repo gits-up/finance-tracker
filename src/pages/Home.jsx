@@ -4,6 +4,8 @@ import { signOut, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Chat from "./Chat";
+import { db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 const YOUTUBE_API_KEY = "AIzaSyC8TkP3BxYXr_fVGlmjGMFgarJoZLcxFoA";
 const SEARCH_QUERY = "finance investing tips";
@@ -25,19 +27,34 @@ const Home = () => {
 
   // Auth
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        setUser({
-          name: currentUser.displayName || "User",
-          email: currentUser.email,
-          photo:
-            currentUser.photoURL ||
-            "https://as1.ftcdn.net/jpg/03/53/11/00/1000_F_353110097_nbpmfn9iHlxef4EDIhXB1tdTD0lcWhG9.jpg",
-        });
+        const userRef = doc(db, "users", currentUser.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          setUser({
+            name: userSnap.data().name || currentUser.displayName || "User",
+            email: currentUser.email,
+            photo:
+              userSnap.data().profileImageUrl ||
+              currentUser.photoURL ||
+              "https://as1.ftcdn.net/jpg/03/53/11/00/1000_F_353110097_nbpmfn9iHlxef4EDIhXB1tdTD0lcWhG9.jpg",
+          });
+        } else {
+          setUser({
+            name: currentUser.displayName || "User",
+            email: currentUser.email,
+            photo:
+              currentUser.photoURL ||
+              "https://as1.ftcdn.net/jpg/03/53/11/00/1000_F_353110097_nbpmfn9iHlxef4EDIhXB1tdTD0lcWhG9.jpg",
+          });
+        }
       } else {
         setUser(null);
       }
     });
+
     return () => unsubscribe();
   }, []);
 
@@ -130,8 +147,11 @@ const Home = () => {
                 assistant.
               </p>
               <p>Fill your details to get accurate recommendations.</p>
-              <button className="mt-3 bg-gray-700 px-4 py-2 rounded-md w-full" onClick={navigateToUpdateProfile}>
-                Click to add data
+              <button
+                className="mt-3 bg-gray-700 px-4 py-2 rounded-md w-full"
+                onClick={navigateToUpdateProfile}
+              >
+                Click to update data
               </button>
             </div>
           </div>
@@ -149,10 +169,16 @@ const Home = () => {
           <h2 className="mb-2 text-lg font-semibold border-t border-gray-500">
             Tools
           </h2>
-          <button className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full" onClick={navigateToSipCal}>
+          <button
+            className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full"
+            onClick={navigateToSipCal}
+          >
             SIP calculator
           </button>
-          <button className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full" onClick={navigateToIntCal}>
+          <button
+            className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full"
+            onClick={navigateToIntCal}
+          >
             Tax Return calculator
           </button>
         </div>
