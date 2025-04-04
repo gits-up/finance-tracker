@@ -19,6 +19,9 @@ const Home = () => {
   const [videos, setVideos] = useState([]);
   const [marketNews, setMarketNews] = useState([]);
   const navigate = useNavigate();
+  const navigateToUpdateProfile = () => navigate("/update");
+  const navigateToSipCal = () => navigate("/sip");
+  const navigateToIntCal = () => navigate("/intcal");
 
   // Auth
   useEffect(() => {
@@ -127,7 +130,7 @@ const Home = () => {
                 assistant.
               </p>
               <p>Fill your details to get accurate recommendations.</p>
-              <button className="mt-3 bg-gray-700 px-4 py-2 rounded-md w-full">
+              <button className="mt-3 bg-gray-700 px-4 py-2 rounded-md w-full" onClick={navigateToUpdateProfile}>
                 Click to add data
               </button>
             </div>
@@ -146,10 +149,10 @@ const Home = () => {
           <h2 className="mb-2 text-lg font-semibold border-t border-gray-500">
             Tools
           </h2>
-          <button className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full">
+          <button className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full" onClick={navigateToSipCal}>
             SIP calculator
           </button>
-          <button className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full">
+          <button className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full" onClick={navigateToIntCal}>
             Interest calculator
           </button>
         </div>

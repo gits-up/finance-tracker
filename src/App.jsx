@@ -18,22 +18,20 @@ const appRouter = createBrowserRouter([
   },
   {
     path: "/home",
-    element: <Home />
+    element: <Home />,
   },
   {
-    path:"/sip",
-    element:<SIPCalculator/>
+    path: "/sip",
+    element: <SIPCalculator />,
   },
   {
-    path:"/intcal",
-    element:<InterestCalculator/>
+    path: "/intcal",
+    element: <InterestCalculator />,
   },
   {
-    
-      path:"/update",
-      element:<UpdateProfile/>
-   
-  }
+    path: "/update",
+    element: <UpdateProfile />,
+  },
 ]);
 
 const App = () => {
