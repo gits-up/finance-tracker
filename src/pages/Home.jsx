@@ -1,86 +1,40 @@
 import React, { useState, useEffect } from "react";
-import { auth } from "../firebase"; // Import Firebase Auth
-import { signOut, onAuthStateChanged } from "firebase/auth"; // For authentication
+import { auth } from "../firebase";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { fetchGeminiResponse } from "../api/gemini";
-import { fetchStockData, fetchCryptoData } from "../api/polygon";
+import Chat from "./Chat";
 
-const YOUTUBE_API_KEY = "AIzaSyC8TkP3BxYXr_fVGlmjGMFgarJoZLcxFoA"; // Replace with your actual key
-const SEARCH_QUERY = "finance investing tips"; // Modify as needed
+const YOUTUBE_API_KEY = "AIzaSyC8TkP3BxYXr_fVGlmjGMFgarJoZLcxFoA";
+const SEARCH_QUERY = "finance investing tips";
 const MAX_RESULTS = 6;
+
+// Replace with your NewsAPI key
+const NEWS_API_KEY = "8eb5d663ed9c47209c3058f06b694a46";
+const INDIAN_MARKET_NEWS_QUERY = "indian stock market";
 
 const Home = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [user, setUser] = useState(null);
   const [videos, setVideos] = useState([]);
-  const [messages, setMessages] = useState([]);
-  const [inputMessage, setInputMessage] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-  const [stockData, setStockData] = useState(null);
-  const [cryptoData, setCryptoData] = useState(null);
+  const [marketNews, setMarketNews] = useState([]);
   const navigate = useNavigate();
 
-  // Fetch user details
+  // Auth
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser({
           name: currentUser.displayName || "User",
           email: currentUser.email,
-          photo:
-            currentUser.photoURL ||
-            "https://as1.ftcdn.net/jpg/03/53/11/00/1000_F_353110097_nbpmfn9iHlxef4EDIhXB1tdTD0lcWhG9.jpg", // Default avatar
+          photo: currentUser.photoURL ||
+            "https://as1.ftcdn.net/jpg/03/53/11/00/1000_F_353110097_nbpmfn9iHlxef4EDIhXB1tdTD0lcWhG9.jpg",
         });
       } else {
         setUser(null);
       }
     });
-
-    return () => unsubscribe(); // Cleanup listener on unmount
-  }, []);
-
-  //Gemini
-  const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
-
-    const newMessage = { sender: "user", text: inputMessage };
-    setMessages((prev) => [...prev, newMessage]); // Add user message
-    setInputMessage("");
-    setIsTyping(true); // Show typing indicator
-
-    // Get AI response
-    const aiResponse = await fetchGeminiResponse(inputMessage);
-    setMessages((prev) => [...prev, { sender: "bot", text: aiResponse }]);
-    setIsTyping(false);
-  };
-
-  //Polygon
-  useEffect(() => {
-    const getMarketData = async () => {
-      try {
-        const stocks = await Promise.all([
-          fetchStockData("AAPL"),
-          fetchStockData("GOOGL"),
-          fetchStockData("MSFT"),
-          fetchStockData("TSLA"),
-        ]);
-
-        const cryptos = await Promise.all([
-          fetchCryptoData("BTCUSD"),
-          fetchCryptoData("ETHUSD"),
-          fetchCryptoData("SOLUSD"),
-        ]);
-
-        // Filter out null/undefined values
-        setStockData(stocks.filter((stock) => stock && stock.ticker));
-        setCryptoData(cryptos.filter((crypto) => crypto && crypto.ticker));
-      } catch (error) {
-        console.error("Error fetching market data:", error);
-      }
-    };
-
-    getMarketData();
+    return () => unsubscribe();
   }, []);
 
   // Fetch YouTube Videos
@@ -97,13 +51,26 @@ const Home = () => {
     };
 
     fetchVideos();
+  }, [])
+  // Fetch Indian Market News
+  useEffect(() => {
+    const fetchMarketNews = async () => {
+      try {
+        const response = await axios.get(
+          `https://newsapi.org/v2/everything?q=${INDIAN_MARKET_NEWS_QUERY}&apiKey=${NEWS_API_KEY}&language=en&sortBy=publishedAt&pageSize=6`
+        );
+        setMarketNews(response.data.articles);
+      } catch (error) {
+        console.error("Error fetching market news:", error);
+      }
+    };
+    fetchMarketNews();
   }, []);
 
-  // Logout Function
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      navigate("/login"); // Redirect to login page after logout
+      navigate("/login");
     } catch (error) {
       console.error("Logout Error:", error.message);
     }
@@ -111,7 +78,6 @@ const Home = () => {
 
   return (
     <div className="flex h-screen bg-gray-900 text-white flex-col md:flex-row relative">
-      {/* Profile Button on Mobile */}
       {!showProfile && user && (
         <div className="md:hidden absolute top-4 left-4 z-10">
           <button onClick={() => setShowProfile(true)}>
@@ -164,7 +130,6 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Tools Section */}
         <div className="mt-6">
           <h2 className="mb-2 text-lg font-semibold border-t border-gray-500">
             Tools
@@ -184,63 +149,39 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Main Chat Section */}
-      <div className="flex-1 flex flex-col justify-between">
-        {/* Chat History */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
-          {messages.length === 0 ? (
-            <p className="text-gray-400 text-center">Start a conversation...</p>
-          ) : (
-            messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`flex ${
-                  msg.sender === "user" ? "justify-end" : "justify-start"
-                }`}
-              >
-                <p
-                  className={`p-3 rounded-lg max-w-xs ${
-                    msg.sender === "user" ? "bg-blue-600" : "bg-gray-700"
-                  }`}
-                >
-                  {msg.text}
-                </p>
-              </div>
-            ))
-          )}
-          {isTyping && (
-            <p className="text-gray-400 text-sm">Finance Buddy is typing...</p>
-          )}
-        </div>
+      {/* Chat Component */}
+      <Chat />
 
-        {/* Input Bar */}
-        <div className="w-full p-4 bg-gray-900 flex items-center">
-          <input
-            type="text"
-            value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleSendMessage();
-              }
-            }}
-            placeholder="Type a message..."
-            className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 focus:outline-none"
-          />
-          <button
-            onClick={handleSendMessage}
-            className="ml-2 bg-gray-700 p-2 rounded"
-          >
-            📨
-          </button>
-        </div>
-      </div>
-
-      {/* Suggested Content - Hidden on Mobile */}
+      {/* Suggested Content */}
       <div className="hidden md:flex w-1/4 p-4 border-l border-gray-500 flex-col justify-between">
         <div className="flex-1 flex flex-col">
           <h2 className="text-lg font-semibold pb-2">Suggested Content</h2>
           <div className="flex-1 flex flex-col justify-between">
+            
+
+            <div className="flex-1 border-t border-gray-500 mt-4">
+              <p className="mt-1 mb-2">Indian Market News:</p>
+              {marketNews.length > 0 ? (
+                marketNews.map((article, index) => (
+                  <a
+                    key={index}
+                    href={article.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block bg-gray-800 p-2 rounded-md mt-2 hover:bg-gray-700"
+                  >
+                    <p className="text-sm font-semibold">{article.title}</p>
+                    <p className="text-xs text-gray-400">
+                      {new Date(article.publishedAt).toLocaleString()}
+                    </p>
+                  </a>
+                ))
+              ) : (
+                <p>Loading market news...</p>
+              )}
+            </div>
+
+
             <div className="flex-1 border-t border-gray-500">
               <p className="mt-1">Videos:</p>
               <div className="space-y-4">
@@ -265,42 +206,6 @@ const Home = () => {
                   <p>Loading videos...</p>
                 )}
               </div>
-            </div>
-            <div className="flex-1 border-t border-gray-500">
-              <p className="mt-1 mb-2">Market Data:</p>
-              {stockData && stockData.length > 0 ? (
-                stockData.map((stock, index) =>
-                  stock && stock.ticker ? ( // Ensure stock exists
-                    <div
-                      key={index}
-                      className="p-2 bg-gray-800 rounded-md mt-2"
-                    >
-                      <p className="text-sm">
-                        📈 <b>{stock.ticker}:</b> ${stock.c}
-                      </p>
-                    </div>
-                  ) : null
-                )
-              ) : (
-                <p>Loading stock data...</p>
-              )}
-
-              {cryptoData && cryptoData.length > 0 ? (
-                cryptoData.map((crypto, index) =>
-                  crypto && crypto.ticker ? ( // Ensure crypto exists
-                    <div
-                      key={index}
-                      className="p-2 bg-gray-800 rounded-md mt-2"
-                    >
-                      <p className="text-sm">
-                        💰 <b>{crypto.ticker}:</b> ${crypto.c}
-                      </p>
-                    </div>
-                  ) : null
-                )
-              ) : (
-                <p>Loading crypto data...</p>
-              )}
             </div>
           </div>
         </div>

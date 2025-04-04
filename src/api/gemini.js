@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const GEMINI_API_KEY = "AIzaSyCpdEo2SdkU4Lju5P98oJNb346tmomXY1I"; // Replace with your actual key
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY; // Correct way in Vite/React
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${GEMINI_API_KEY}`;
 
 export const fetchGeminiResponse = async (message) => {

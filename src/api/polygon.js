@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const POLYGON_API_KEY = "9mCqzPvwysIdAnyklmSOvoBqisjP9bs7"; // Replace with your actual key
+const POLYGON_API_KEY = import.meta.env.VITE_POLGON_API_KEY; // Replace with your actual key
 const POLYGON_API_URL = "https://api.polygon.io/v2";
 
 export const fetchStockData = async (ticker) => {

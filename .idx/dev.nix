@@ -39,7 +39,19 @@
     workspace = {
       # Runs when a workspace is first created with this `dev.nix` file
       onCreate = {
-      
+        # create a python virtual environment
+        create-venv = ''
+          python -m venv $VENV_DIR
+
+          if [ ! -f requirements.txt ]; then
+            echo "requirements.txt not found. Creating one with flet..."
+            echo "flet" > requirements.txt
+          fi
+
+          # activate virtual env and install requirements
+          source $VENV_DIR/bin/activate
+          pip install -r requirements.txt
+        '';
         npm-install = "npm ci --no-audit --prefer-offline --no-progress --timing";
         # Open editors for the following files by default, if they exist:
         default.openFiles = [ "src/App.tsx" "src/App.ts" "src/App.jsx" "src/App.js" ];

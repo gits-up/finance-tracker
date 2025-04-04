@@ -3,6 +3,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./pages/Login";
 import Signup from "./pages/SignUp";
 import Home from "./pages/Home";
+import SIPCalculator from "./pages/SipCal";
+import InterestCalculator from "./pages/IntCal";
+import UpdateProfile from "./pages/UpdateProfile";
 
 const appRouter = createBrowserRouter([
   {
@@ -17,6 +20,20 @@ const appRouter = createBrowserRouter([
     path: "/home",
     element: <Home />
   },
+  {
+    path:"/sip",
+    element:<SIPCalculator/>
+  },
+  {
+    path:"/intcal",
+    element:<InterestCalculator/>
+  },
+  {
+    
+      path:"/update",
+      element:<UpdateProfile/>
+   
+  }
 ]);
 
 const App = () => {
