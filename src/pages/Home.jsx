@@ -153,7 +153,7 @@ const Home = () => {
             SIP calculator
           </button>
           <button className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full" onClick={navigateToIntCal}>
-            Interest calculator
+            Tax Return calculator
           </button>
         </div>
       </div>
