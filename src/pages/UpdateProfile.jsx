@@ -77,7 +77,6 @@ const UpdateProfile = () => {
               onChange={handleChange}
               className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600"
               placeholder="Your name"
-              required
             />
           </div>
           <div>
@@ -89,7 +88,6 @@ const UpdateProfile = () => {
               onChange={handleChange}
               className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600"
               placeholder="Monthly Salary"
-              required
             />
           </div>
           <div>
@@ -101,7 +99,6 @@ const UpdateProfile = () => {
               onChange={handleChange}
               className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600"
               placeholder="Monthly Expenses"
-              required
             />
           </div>
           <div>
