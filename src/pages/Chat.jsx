@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { getFinancialAdvice } from "../financeService";
 import { getMarketData } from "../marketDataService";
-import { getMarketAnalysis as getStockAnalysis } from "/src/services/predictionService.js";
+import { getMarketAnalysis as getStockAnalysis } from "../services/predictionService.js";
 
 const Chat = () => {
   const [messages, setMessages] = useState(() => {
