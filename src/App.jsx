@@ -6,6 +6,11 @@ import Home from "./pages/Home";
 import SIPCalculator from "./pages/SipCal";
 import InterestCalculator from "./pages/IntCal";
 import UpdateProfile from "./pages/UpdateProfile";
+import LumpSumCal from "./pages/LumpSumCal"; 
+import RetirementCal from "./pages/RetirementCal";
+import AssetAllocationCal from "./pages/AssetAllocationCal";
+import AdvancedGoalCal from "./pages/AdvancedGoalCal";
+import PPFCalculator from "./pages/PPFCalculator";
 
 const appRouter = createBrowserRouter([
   {
@@ -31,6 +36,26 @@ const appRouter = createBrowserRouter([
   {
     path: "/update",
     element: <UpdateProfile />,
+  },
+  {
+    path: "/lumpsum", 
+    element: <LumpSumCal />,
+  },
+  {
+    path: "/retirement",
+    element: <RetirementCal />,
+  },
+  {
+    path: "/asset-allocation",
+    element: <AssetAllocationCal />,
+  },
+  {
+    path: "/advanced-goal",
+    element: <AdvancedGoalCal />,
+  },
+  {
+    path: "/ppf-calculator",
+    element: <PPFCalculator />,
   },
 ]);
 

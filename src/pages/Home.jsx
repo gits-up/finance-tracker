@@ -4,12 +4,13 @@ import { signOut, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Chat from "./Chat";
+import { db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 const YOUTUBE_API_KEY = "AIzaSyC8TkP3BxYXr_fVGlmjGMFgarJoZLcxFoA";
 const SEARCH_QUERY = "finance investing tips";
 const MAX_RESULTS = 6;
 
-// Replace with your NewsAPI key
 const NEWS_API_KEY = "8eb5d663ed9c47209c3058f06b694a46";
 const INDIAN_MARKET_NEWS_QUERY = "indian stock market";
 
@@ -22,22 +23,42 @@ const Home = () => {
   const navigateToUpdateProfile = () => navigate("/update");
   const navigateToSipCal = () => navigate("/sip");
   const navigateToIntCal = () => navigate("/intcal");
+  const navigateToLumpSumCal = () => navigate("/lumpsum");
+  const navigateToRetirementCal = () => navigate("/retirement");
+  const navigateToAssetAllocation = () => navigate("/asset-allocation");
+  const navigateToAdvancedGoal = () => navigate("/advanced-goal");
+  const navigateToPPFCalculator = () => navigate("/ppf-calculator");
 
   // Auth
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        setUser({
-          name: currentUser.displayName || "User",
-          email: currentUser.email,
-          photo:
-            currentUser.photoURL ||
-            "https://as1.ftcdn.net/jpg/03/53/11/00/1000_F_353110097_nbpmfn9iHlxef4EDIhXB1tdTD0lcWhG9.jpg",
-        });
+        const userRef = doc(db, "users", currentUser.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          setUser({
+            name: userSnap.data().name || currentUser.displayName || "User",
+            email: currentUser.email,
+            photo:
+              userSnap.data().profileImageUrl ||
+              currentUser.photoURL ||
+              "https://as1.ftcdn.net/jpg/03/53/11/00/1000_F_353110097_nbpmfn9iHlxef4EDIhXB1tdTD0lcWhG9.jpg",
+          });
+        } else {
+          setUser({
+            name: currentUser.displayName || "User",
+            email: currentUser.email,
+            photo:
+              currentUser.photoURL ||
+              "https://as1.ftcdn.net/jpg/03/53/11/00/1000_F_353110097_nbpmfn9iHlxef4EDIhXB1tdTD0lcWhG9.jpg",
+          });
+        }
       } else {
         setUser(null);
       }
     });
+
     return () => unsubscribe();
   }, []);
 
@@ -56,6 +77,7 @@ const Home = () => {
 
     fetchVideos();
   }, []);
+
   // Fetch Indian Market News
   useEffect(() => {
     const fetchMarketNews = async () => {
@@ -130,8 +152,11 @@ const Home = () => {
                 assistant.
               </p>
               <p>Fill your details to get accurate recommendations.</p>
-              <button className="mt-3 bg-gray-700 px-4 py-2 rounded-md w-full" onClick={navigateToUpdateProfile}>
-                Click to add data
+              <button
+                className="mt-3 bg-gray-700 px-4 py-2 rounded-md w-full"
+                onClick={navigateToUpdateProfile}
+              >
+                Click to update data
               </button>
             </div>
           </div>
@@ -147,13 +172,49 @@ const Home = () => {
 
         <div className="mt-6">
           <h2 className="mb-2 text-lg font-semibold border-t border-gray-500">
-            Tools
+            Financial Calculators
           </h2>
-          <button className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full" onClick={navigateToSipCal}>
+          <button
+            className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full"
+            onClick={navigateToAdvancedGoal}
+          >
+            Goal Planner
+          </button>
+          <button
+            className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full"
+            onClick={navigateToSipCal}
+          >
             SIP calculator
           </button>
-          <button className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full" onClick={navigateToIntCal}>
-            Interest calculator
+          <button
+            className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full"
+            onClick={navigateToIntCal}
+          >
+            Tax Return calculator
+          </button>
+          <button
+            className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full"
+            onClick={navigateToLumpSumCal}
+          >
+            Lumpsum Calculator
+          </button>
+          <button
+            className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full"
+            onClick={navigateToRetirementCal}
+          >
+            Retirement Planner
+          </button>
+          <button
+            className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full"
+            onClick={navigateToAssetAllocation}
+          >
+            Asset Allocation Calculator
+          </button>
+          <button
+            className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full"
+            onClick={navigateToPPFCalculator}
+          >
+            PPF Calculator
           </button>
         </div>
       </div>
