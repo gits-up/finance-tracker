@@ -14,9 +14,6 @@ const UpdateProfile = () => {
   const [profileImage, setProfileImage] = useState(null);
   const [uploading, setUploading] = useState(false);
 
-  const [profileImage, setProfileImage] = useState(null);
-  const [uploading, setUploading] = useState(false);
-
   const handleChange = (e) => {
     if (e.target.name === "profile") {
       setProfileImage(e.target.files[0]);
