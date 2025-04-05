@@ -11,6 +11,8 @@ const UpdateProfile = () => {
     loan: "",
     healthInsurance: "",
   });
+  const [profileImage, setProfileImage] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   const [profileImage, setProfileImage] = useState(null);
   const [uploading, setUploading] = useState(false);
