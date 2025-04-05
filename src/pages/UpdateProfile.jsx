@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { db, auth } from "../firebase";
 import { doc, setDoc } from "firebase/firestore";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const UpdateProfile = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ const UpdateProfile = () => {
   });
   const [profileImage, setProfileImage] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     if (e.target.name === "profile") {
@@ -52,7 +54,7 @@ const UpdateProfile = () => {
         email: auth.currentUser.email,
       });
 
-      alert("Profile updated successfully!");
+      navigate('/home');
     } catch (error) {
       console.error("Error updating profile:", error);
       alert("Failed to update profile.");
