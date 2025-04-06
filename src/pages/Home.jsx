@@ -171,7 +171,7 @@ const Home = () => {
           </button>
         </div>
 
-        <div className="mt-4 mb-4 h-1/2 border-t border-gray-500 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-transparent pr-2">
+        <div className="h-1/2 border-t border-gray-500 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-transparent pr-2">
           <h2 className="mb-2 text-lg font-semibold border-t border-gray-500">
             Financial Calculators
           </h2>
