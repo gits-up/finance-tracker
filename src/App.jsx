@@ -6,11 +6,12 @@ import Home from "./pages/Home";
 import SIPCalculator from "./pages/SipCal";
 import InterestCalculator from "./pages/IntCal";
 import UpdateProfile from "./pages/UpdateProfile";
-import LumpSumCal from "./pages/LumpSumCal"; 
+import LumpSumCal from "./pages/LumpSumCal";
 import RetirementCal from "./pages/RetirementCal";
 import AssetAllocationCal from "./pages/AssetAllocationCal";
 import AdvancedGoalCal from "./pages/AdvancedGoalCal";
 import PPFCalculator from "./pages/PPFCalculator";
+import GstCalculator from "./pages/GstCalculator";
 
 const appRouter = createBrowserRouter([
   {
@@ -38,7 +39,7 @@ const appRouter = createBrowserRouter([
     element: <UpdateProfile />,
   },
   {
-    path: "/lumpsum", 
+    path: "/lumpsum",
     element: <LumpSumCal />,
   },
   {
@@ -56,6 +57,10 @@ const appRouter = createBrowserRouter([
   {
     path: "/ppf-calculator",
     element: <PPFCalculator />,
+  },
+  {
+    path: "/gst-calculator",
+    element: <GstCalculator />,
   },
 ]);
 

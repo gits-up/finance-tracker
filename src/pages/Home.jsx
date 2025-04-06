@@ -28,6 +28,7 @@ const Home = () => {
   const navigateToAssetAllocation = () => navigate("/asset-allocation");
   const navigateToAdvancedGoal = () => navigate("/advanced-goal");
   const navigateToPPFCalculator = () => navigate("/ppf-calculator");
+  const navigateToGstCalculator = () => navigate("/gst-calculator");
 
   // Auth
   useEffect(() => {
@@ -215,6 +216,12 @@ const Home = () => {
             onClick={navigateToPPFCalculator}
           >
             PPF Calculator
+          </button>
+          <button
+            className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full"
+            onClick={navigateToGstCalculator} 
+          >
+            GST Calculator
           </button>
         </div>
       </div>
