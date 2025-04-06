@@ -142,13 +142,13 @@ const UpdateProfile = () => {
             <button
               type="submit"
               disabled={uploading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white p-2 rounded"
+              className="w-full  bg-blue-600 hover:bg-blue-700 text-white p-2 rounded"
             >
               {uploading ? "Updating..." : "Update Profile"}
             </button>
             <button
               onClick={handleGoBack}
-              className="w-full bg-gray-600 hover:bg-gray-700 text-white p-2 rounded"
+              className=" mt-4 mb-4 w-full bg-gray-300 hover:bg-gray-500 text-white p-2 rounded"
             >
               Return
             </button>
