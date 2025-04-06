@@ -171,7 +171,7 @@ const Home = () => {
           </button>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-6 h-1/2 border-t border-gray-500 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-transparent pr-2">
           <h2 className="mb-2 text-lg font-semibold border-t border-gray-500">
             Financial Calculators
           </h2>
@@ -219,7 +219,7 @@ const Home = () => {
           </button>
           <button
             className="mt-2 bg-gray-700 px-4 py-2 rounded-md w-full"
-            onClick={navigateToGstCalculator} 
+            onClick={navigateToGstCalculator}
           >
             GST Calculator
           </button>
