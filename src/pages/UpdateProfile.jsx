@@ -148,7 +148,7 @@ const UpdateProfile = () => {
             </button>
             <button
               onClick={handleGoBack}
-              className="mb-4 flex items-center text-gray-300 hover:text-white transition-colors"
+              className="w-full bg-gray-600 hover:bg-gray-700 text-white p-2 rounded"
             >
               Return
             </button>
