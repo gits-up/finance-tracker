@@ -69,7 +69,6 @@ export default function AdvancedTaxCalculator() {
     setTaxOwed(calculatedTax);
   };
 
-  // Simplified tax rate lookup (would use actual tax brackets in production)
   const getTaxRate = (status, taxableIncome) => {
     if (status === "single") {
       if (taxableIncome <= 10275) return 10;
@@ -105,27 +104,30 @@ export default function AdvancedTaxCalculator() {
   };
 
   const handleReturn = () => {
-    navigate(-1); // Go back to previous page
+    navigate(-1);
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-2xl border border-gray-700">
-      <button
+    <div className="min-h-screen bg-gray-900 flex flex-col items-center px-4 py-8">
+      {/* Header section with proper spacing */}
+      <div className="w-full max-w-2xl mb-8 flex justify-between items-center">
+        <button
           onClick={handleReturn}
-          className="mb-4 flex items-center text-gray-300 hover:text-white transition-colors"
+          className="flex items-center text-gray-300 hover:text-white transition-colors"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
           </svg>
           Back
         </button>
-        <div className="flex justify-between items-start mb-6">
-          <h2 className="text-2xl font-bold text-white">
-            Advanced Tax Return Calculator
-          </h2>
-        </div>
+        <h2 className="text-2xl font-bold text-white">
+          Advanced Tax Return Calculator
+        </h2>
+        <div className="w-12"></div>
+      </div>
 
+      {/* Calculator box with proper spacing */}
+      <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-2xl border border-gray-700">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left Column - Income Information */}
           <div className="space-y-4">
@@ -142,15 +144,9 @@ export default function AdvancedTaxCalculator() {
                 value={filingStatus}
                 onChange={(e) => setFilingStatus(e.target.value)}
               >
-                <option value="single" className="bg-gray-800">
-                  Single
-                </option>
-                <option value="married" className="bg-gray-800">
-                  Married Filing Jointly
-                </option>
-                <option value="headOfHousehold" className="bg-gray-800">
-                  Head of Household
-                </option>
+                <option value="single">Single</option>
+                <option value="married">Married Filing Jointly</option>
+                <option value="headOfHousehold">Head of Household</option>
               </select>
             </div>
 
