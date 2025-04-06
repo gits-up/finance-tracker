@@ -7,7 +7,7 @@ import Chat from "./Chat";
 import { db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 
-const YOUTUBE_API_KEY = "AIzaSyC8TkP3BxYXr_fVGlmjGMFgarJoZLcxFoA";
+const YOUTUBE_API_KEY = "AIzaSyBuWnDA6sjjVL3t0CDDSNlcs2FVrGS-2T4";
 const SEARCH_QUERY = "finance investing tips";
 const MAX_RESULTS = 6;
 
